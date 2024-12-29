@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "query-engine"
+version = "0.1.0"
+description = "Query Engine for TEDx Italian Speeches RAG"
+authors = ["Luca Ferrario <lucaferrario199@gmail.com>"]
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "3.12.3"
+click = "^8.1.8"
+gradio = "^5.9.1"
+llama-index-core = "^0.12.8"
+llama-index-embeddings-openai = "^0.3.1"
+llama-index-llms-openai = "^0.3.12"
+llama-index-vector-stores-chroma = "^0.4.1"
+loguru = "^0.7.3"
+llama-index = "^0.12.8"
+pysqlite3-binary = ">=0.5.4"
+chromadb = "^0.5.23"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.4"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["*.py"]

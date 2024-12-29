@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  data_loader:
+    build:
+      context: ./data_loader
+      dockerfile: Dockerfile
+    container_name: data_loader
+    restart: on-failure
+    volumes:
+      - chroma_db_data:/app/chroma_db:rw
+      - ./transcripts:/app/transcripts:ro
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - TRANSCRIPTS_INPUT_DIR=/app/transcripts
+      - CHROMA_DB_PATH=/app/chroma_db
+      - COLLECTION_NAME=${COLLECTION_NAME}
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL}
+      - LLM_MODEL=${LLM_MODEL}
+      - CHUNK_SIZE=${CHUNK_SIZE}
+      - CHUNK_OVERLAP=${CHUNK_OVERLAP}
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sys; sys.exit(0)"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+
+  query_engine:
+    build:
+      context: ./query_engine
+      dockerfile: Dockerfile
+    container_name: query_engine
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - chroma_db_data:/app/chroma_db:ro
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - CHROMA_DB_PATH=/app/chroma_db
+      - COLLECTION_NAME=${COLLECTION_NAME}
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL}
+      - LLM_MODEL=${LLM_MODEL}
+    networks:
+      - app_network
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+    depends_on:
+      data_loader:
+        condition: service_completed_successfully
+
+networks:
+  app_network:
+    driver: bridge
+
+volumes:
+  chroma_db_data:
+    driver: local
