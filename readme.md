@@ -98,6 +98,7 @@ This project utilizes the following technologies:
 
 ## 🎬 Demo
 
+[![Demo Video](https://img.youtube.com/vi/up3DNARO-Bk/0.jpg)](https://www.youtube.com/watch?v=up3DNARO-Bk)
 
 ## 📜 License
 
